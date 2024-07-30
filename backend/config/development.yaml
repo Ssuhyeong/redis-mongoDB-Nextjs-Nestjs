@@ -1,8 +1,0 @@
-db:
-    host: 'mydb.cxmouyggo1g3.ap-northeast-2.rds.amazonaws.com'
-    username: 'admin'
-    password: 'Kinx0900!'
-    synchronize: true
-
-jwt:
-    secret: 'Secret1234'

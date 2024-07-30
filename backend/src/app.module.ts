@@ -1,29 +1,28 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import * as redisStore from 'cache-manager-redis-store';
-import { CacheModule } from '@nestjs/cache-manager';
-import { CacheInterceptor } from '@nestjs/cache-manager';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeORMConfig } from './configs/typeorm.config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { CacheConfigModule } from './cache/cache.module';
+import { DemoModule } from './demo/demo.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
-        CacheModule.register({
-            store: redisStore,
-            host: 'localhost',
-            port: 6379,
-        }),
-    ],
-    controllers: [AppController],
-    providers: [
-        AppService,
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: CacheInterceptor,
-        },
-    ],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.development.local'],
+    }),
+    CacheConfigModule,
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (ConfigService: ConfigService) => ({
+        uri: ConfigService.get('MONGO_URL'),
+      }),
+    }),
+    DemoModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

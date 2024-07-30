@@ -1,23 +1,29 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
 async function bootstrap() {
-    // const appOptions = { cors: true };
-    const app = await NestFactory.create(AppModule);
-    app.setGlobalPrefix('api');
+  const app = await NestFactory.create(AppModule);
+  app.enableCors();
+  const logger = new Logger();
 
-    const options = new DocumentBuilder()
-        .setTitle('Kinx example')
-        .setDescription('kinx nestjs redlock')
-        .setVersion('1.0')
-        .setBasePath('api')
-        // .addBearerAuth
-        .build();
+  // Swagger configuration
+  const options = new DocumentBuilder()
+    .setTitle('nestjs redis')
+    .setVersion('1.0')
+    .build();
 
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('/docs', app, document);
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 
-    await app.listen(3000);
+  const port = 3000;
+  await app.listen(port, () => {
+    logger.log(`Server is running on port ${port}`);
+  });
 }
+
 bootstrap();
