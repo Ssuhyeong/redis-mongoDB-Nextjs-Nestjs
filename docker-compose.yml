@@ -15,6 +15,10 @@ services:
       - redis
     networks:
       - mynetwork
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
   frontend:
     build:
       context: ./frontend

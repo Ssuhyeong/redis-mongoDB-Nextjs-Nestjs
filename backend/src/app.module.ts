@@ -5,7 +5,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CacheConfigModule } from './cache/cache.module';
 import { DemoModule } from './demo/demo.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
